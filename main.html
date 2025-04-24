@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    #qr-reader {
+      width: 100%;
+      max-width: 500px;
+      margin: auto;
+    }
+    #result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .valid {
+      color: green;
+    }
+    .invalid {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Event QR Scanner</h1>
+  <div id="qr-reader"></div>
+  <div id="result"></div>
+
+  <script>
+    const validCodes = [
+      "EVENT2025-Guest001",
+      "EVENT2025-Guest002",
+      "EVENT2025-Guest003",
+      // Add all 200 guest codes here
+    ];
+
+    const usedCodes = new Set();
+
+    function isCodeValid(code) {
+      return validCodes.includes(code) && !usedCodes.has(code);
+    }
+
+    function markAsUsed(code) {
+      usedCodes.add(code);
+    }
+
+    function showResult(message, valid) {
+      const result = document.getElementById("result");
+      result.textContent = message;
+      result.className = valid ? "valid" : "invalid";
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+      if (isCodeValid(decodedText)) {
+        showResult("✅ Valid Ticket: " + decodedText, true);
+        markAsUsed(decodedText);
+      } else if (usedCodes.has(decodedText)) {
+        showResult("⚠️ Ticket already used: " + decodedText, false);
+      } else {
+        showResult("❌ Invalid Ticket: " + decodedText, false);
+      }
+    }
+
+    const html5QrCode = new Html5Qrcode("qr-reader");
+
+    Html5Qrcode.getCameras().then(devices => {
+      if (devices && devices.length) {
+        let cameraId = devices[0].id;
+        html5QrCode.start(
+          cameraId,
+          {
+            fps: 10,
+            qrbox: 250
+          },
+          onScanSuccess
+        );
+      }
+    }).catch(err => {
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,30 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+h1 {
+  text-align: center;
+}
+
+#qr-reader {
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+}
+
+#result {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.valid {
+  color: green;
+}
+
+.invalid {
+  color: red;
+}
